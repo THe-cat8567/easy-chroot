@@ -1,0 +1,51 @@
+#! /bin/sh
+
+# ensure root
+[ "$(id -u)" = "0" ] || {
+	echo "FATAL: easy-chroot must be ran as root"
+ 	exit 1
+}
+
+# ensure at least $1 is passed
+[ -z "${1}" ] && {
+	echo "easy-chroot: [chroot directory] [chroot arguments]"
+	exit 1
+}
+
+CHROOT_DIR="${1}"
+shift 1
+
+# ensure $CHROOT_DIR is valid
+[ -d "${CHROOT_DIR}" ] || {
+	echo "FATAL: ${CHROOT_DIR} is not a directory"
+	exit 1
+}
+
+mountpoint -q "${CHROOT_DIR}" || {
+	echo "WARNING: ${CHROOT_DIR} is not a mountpoint"
+	exit 1
+}
+
+# mount API filesystems
+cd "${CHROOT_DIR}"
+mount -t proc none proc/
+mount -t sysfs /sys sys/
+mount --rbind /dev dev/
+mount --rbind /run run/
+mount --rbind /sys/firmware/efi/efivars sys/firmware/efi/efivars/
+
+# copy host resolv.conf to $CHROOT_DIR
+cp /etc/resolv.conf etc/
+
+# chroot
+SHELL="/bin/sh" \
+PS1='chroot $PWD -> ' \
+chroot "${CHROOT_DIR}" "${@}"
+
+# clean up
+
+umount -R proc/
+umount -R sys/
+umount -R dev/
+umount -R run/
+umount -R sys/firmware/efi/efivars/

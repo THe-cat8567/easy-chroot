@@ -1,2 +1,0 @@
-# easy-chroot
-chroot helper

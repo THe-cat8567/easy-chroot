@@ -1,0 +1,6 @@
+chroot helper to make chrooting a bit easier
+
+similar to `arch-chroot` [1] and `xchroot` [2]
+
+[1] https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in
+[2] https://github.com/leahneukirchen/xtools/blob/master/xchroot

@@ -23,7 +23,6 @@ shift 1
 
 mountpoint -q "${CHROOT_DIR}" || {
 	echo "WARNING: ${CHROOT_DIR} is not a mountpoint"
-	exit 1
 }
 
 # mount API filesystems

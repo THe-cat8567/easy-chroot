@@ -6,7 +6,6 @@
  	exit 1
 }
 
-# ensure at least $1 is passed
 [ -z "${1}" ] && {
 	echo "easy-chroot: [chroot directory] [chroot arguments]"
 	exit 1
@@ -15,7 +14,6 @@
 CHROOT_DIR="${1}"
 shift 1
 
-# ensure $CHROOT_DIR is valid
 [ -d "${CHROOT_DIR}" ] || {
 	echo "FATAL: ${CHROOT_DIR} is not a directory"
 	exit 1
@@ -33,16 +31,14 @@ mount --rbind /dev dev/
 mount --rbind /run run/
 mount --rbind /sys/firmware/efi/efivars sys/firmware/efi/efivars/
 
-# copy host resolv.conf to $CHROOT_DIR
 cp /etc/resolv.conf etc/
 
-# chroot
-SHELL="/bin/sh" \
+# safe to assume /bin/bash exists
+SHELL="/bin/bash" \
 PS1='chroot $PWD -> ' \
 chroot "${CHROOT_DIR}" "${@}"
 
 # clean up
-
 umount -R proc/
 umount -R sys/
 umount -R dev/
